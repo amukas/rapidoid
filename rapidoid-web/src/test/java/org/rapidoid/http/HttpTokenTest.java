@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@
  */
 
 package org.rapidoid.http;
-
 
 import org.junit.Test;
 import org.rapidoid.annotation.Authors;
@@ -33,19 +32,16 @@ public class HttpTokenTest extends HttpTestCommons {
 
 	@Test
 	public void testHttpToken() {
-		On.req(new ReqRespHandler() {
-			@Override
-			public Object execute(Req req, Resp resp) throws Exception {
-				Log.info("Token", "data", req.token());
+		On.req((ReqRespHandler) (req, resp) -> {
+			Log.info("Token", "data", req.token());
 
-				int n = req.token("n", 0) + 1;
-				resp.token("n", n);
+			int n = req.token("n", 0) + 1;
+			resp.token("n", n);
 
-				int m = req.token("m", 10) + 1;
-				resp.token("m", m);
+			int m = req.token("m", 10) + 1;
+			resp.token("m", m);
 
-				return n + ":" + m;
-			}
+			return n + ":" + m;
 		});
 
 		HttpClient client = HTTP.client().keepCookies(true);

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,11 +20,10 @@
 
 package org.rapidoid.docs;
 
-
+import org.essentials4j.Do;
 import org.junit.Test;
 import org.rapidoid.commons.Str;
 import org.rapidoid.docs.blank.BlankTest;
-import org.rapidoid.fluent.Do;
 import org.rapidoid.http.IsolatedIntegrationTest;
 import org.rapidoid.io.FileSearchResult;
 import org.rapidoid.io.IO;
@@ -76,7 +75,7 @@ public abstract class DocTest extends IsolatedIntegrationTest {
 		String dir = System.getProperty("user.dir");
 		dir = Str.cutToFirst(dir, "rapidoid") + "rapidoid";
 
-		String asciidoc = Msc.path(dir, "asciidoc", "examples");
+		String asciidoc = Msc.path(dir, "docs", "examples");
 		new File(asciidoc).mkdirs();
 
 		generateAsciiDoc(doc, pkg, asciidoc, files);
@@ -147,7 +146,7 @@ public abstract class DocTest extends IsolatedIntegrationTest {
 		Collections.sort(res);
 		filenames.addAll(res);
 
-		return Do.map(filenames).to(f -> f.relativeName(), f -> IO.load(f.absoluteName()));
+		return Do.map(filenames).toMap(FileSearchResult::relativeName, f -> IO.load(f.absoluteName()));
 	}
 
 	protected void exercise() {

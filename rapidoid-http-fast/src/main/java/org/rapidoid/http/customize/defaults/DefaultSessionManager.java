@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@
  */
 
 package org.rapidoid.http.customize.defaults;
-
 
 import org.rapidoid.RapidoidThing;
 import org.rapidoid.annotation.Authors;
@@ -49,7 +48,7 @@ public class DefaultSessionManager extends RapidoidThing implements SessionManag
 	private final Map<String, SessionHolder> sessions = Coll.autoExpandingMap(String.class, SessionHolder.class);
 
 	@Override
-	public Map<String, Serializable> loadSession(Req req, String sessionId) throws Exception {
+	public Map<String, Serializable> loadSession(Req req, String sessionId) {
 		Fire.event(Events.SESSION_LOAD, "id", sessionId);
 
 		SessionHolder holder = sessions.get(sessionId);
@@ -75,7 +74,7 @@ public class DefaultSessionManager extends RapidoidThing implements SessionManag
 	}
 
 	@Override
-	public void saveSession(Req req, String sessionId, Map<String, Serializable> session) throws Exception {
+	public void saveSession(Req req, String sessionId, Map<String, Serializable> session) {
 		Fire.event(Events.SESSION_SAVE, "id", sessionId);
 
 		SessionHolder holder = sessions.get(sessionId);

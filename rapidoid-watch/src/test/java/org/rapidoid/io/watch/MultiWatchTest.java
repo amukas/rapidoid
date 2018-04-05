@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,18 +20,16 @@
 
 package org.rapidoid.io.watch;
 
-
 import org.junit.Test;
 import org.rapidoid.annotation.Authors;
 import org.rapidoid.annotation.Since;
 import org.rapidoid.collection.Coll;
 import org.rapidoid.io.IO;
-import org.rapidoid.lambda.Operation;
 import org.rapidoid.test.TestCommons;
+import org.rapidoid.test.TestIO;
 import org.rapidoid.u.U;
 import org.rapidoid.util.Msc;
 
-import java.io.IOException;
 import java.util.Set;
 
 @Authors("Nikolche Mihajlovski")
@@ -39,8 +37,8 @@ import java.util.Set;
 public class MultiWatchTest extends TestCommons {
 
 	@Test(timeout = 60000)
-	public void shouldSupportMultipleWatchCalls() throws IOException {
-		String dir = createTempDir("watch-service-test");
+	public void shouldSupportMultipleWatchCalls() {
+		String dir = TestIO.createTempDir("watch-service-test");
 
 		if (!TestCommons.RAPIDOID_CI) {
 			for (int i = 0; i < 10; i++) {
@@ -56,12 +54,7 @@ public class MultiWatchTest extends TestCommons {
 
 		for (int i = 0; i < total; i++) {
 			final int seenBy = i;
-			Msc.watchForChanges(dir, new Operation<String>() {
-					@Override
-					public void execute(String filename) throws Exception {
-						seen.add(seenBy);
-					}
-				}
+			Msc.watchForChanges(dir, filename -> seen.add(seenBy)
 			);
 		}
 

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@
  */
 
 package org.rapidoid.http;
-
 
 import org.junit.Test;
 import org.rapidoid.annotation.Authors;
@@ -31,6 +30,7 @@ import org.rapidoid.log.Log;
 import org.rapidoid.log.LogLevel;
 import org.rapidoid.security.Role;
 import org.rapidoid.setup.On;
+import org.rapidoid.test.TestCtx;
 import org.rapidoid.u.U;
 import org.rapidoid.util.Msc;
 
@@ -65,6 +65,7 @@ public class HttpLoginTest extends IsolatedIntegrationTest {
 		multiThreaded(Msc.normalOrHeavy(5, 150), Msc.normalOrHeavy(10, 15000), this::randomUserLogin);
 	}
 
+	@TestCtx
 	private void randomUserLogin() {
 		while (!ready) U.sleep(100); // wait
 

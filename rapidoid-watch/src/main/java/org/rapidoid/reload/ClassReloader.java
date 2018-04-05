@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,6 @@ import org.rapidoid.cls.Cls;
 import org.rapidoid.io.IO;
 import org.rapidoid.log.Log;
 import org.rapidoid.u.U;
-import org.rapidoid.util.MscOpts;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
@@ -35,7 +34,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
-
+import java.util.function.Predicate;
 
 @Authors("Nikolche Mihajlovski")
 @Since("4.1.0")
@@ -44,12 +43,14 @@ public class ClassReloader extends ClassLoader {
 	private final List<String> names;
 	private final Collection<String> classpath;
 	private final ClassLoader parent;
+	private final Predicate<String> veto;
 
-	public ClassReloader(Collection<String> classpath, ClassLoader parent, List<String> names) {
+	public ClassReloader(Collection<String> classpath, ClassLoader parent, List<String> names, Predicate<String> veto) {
 		super(parent);
 		this.classpath = classpath;
 		this.parent = parent;
 		this.names = names;
+		this.veto = veto;
 	}
 
 	@Override
@@ -159,8 +160,9 @@ public class ClassReloader extends ClassLoader {
 	}
 
 	private boolean shouldReload(String classname) {
-		boolean couldReload = names.contains(classname) || (!Cls.isRapidoidClass(classname) && !Cls.isJREClass(classname)
-			&& !isEntity(classname) && findOnClasspath(classname) != null);
+		boolean couldReload = names.contains(classname)
+			|| (!Cls.isRapidoidClass(classname) && !Cls.isJREClass(classname)
+			&& !isReloadForbidden(classname) && findOnClasspath(classname) != null);
 
 		return couldReload && !originalMarkedNotToReload(classname);
 	}
@@ -170,8 +172,8 @@ public class ClassReloader extends ClassLoader {
 		return cls != null && reloadVeto(cls);
 	}
 
-	private boolean isEntity(String classname) {
-		return MscOpts.hasRapidoidJPA() && OptionalJPAUtil.isEntity(classname);
+	private boolean isReloadForbidden(String classname) {
+		return veto.test(classname);
 	}
 
 	private static String getClassRelativePath(String classname) {

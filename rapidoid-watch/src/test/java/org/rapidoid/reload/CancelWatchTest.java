@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@
  */
 
 package org.rapidoid.reload;
-
 
 import org.junit.Test;
 import org.rapidoid.annotation.Authors;
@@ -38,11 +37,8 @@ public class CancelWatchTest extends TestCommons {
 		// expecting a lot of content with frequent changes
 		String userHome = System.getProperty("user.home");
 
-		Operation<String> noOp = new Operation<String>() {
-			@Override
-			public void execute(String obj) {
-				// do nothing
-			}
+		Operation<String> noOp = obj -> {
+			// do nothing
 		};
 
 		for (int i = 0; i < 30; i++) {

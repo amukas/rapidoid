@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,6 @@ import java.sql.*;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 
 @Authors("Nikolche Mihajlovski")
 @Since("5.3.0")
@@ -66,19 +65,16 @@ public class JdbcUtil extends RapidoidThing {
 	}
 
 	private static String substituteNamedParams(String sql, final Map<String, ?> namedArgs, final List<Object> arguments) {
-		return NAMED_PARAMS_REWRITER.rewrite(sql, new Mapper<String[], String>() {
-			@Override
-			public String map(String[] groups) throws Exception {
-				String name = groups[1];
+		return NAMED_PARAMS_REWRITER.rewrite(sql, groups -> {
+			String name = groups[1];
 
-				if (namedArgs.containsKey(name)) {
-					Object value = namedArgs.get(name);
-					arguments.add(value);
-					return "?";
+			if (namedArgs.containsKey(name)) {
+				Object value = namedArgs.get(name);
+				arguments.add(value);
+				return "?";
 
-				} else {
-					return groups[0]; // not in the args -> leave it untouched
-				}
+			} else {
+				return groups[0]; // not in the args -> leave it untouched
 			}
 		});
 	}

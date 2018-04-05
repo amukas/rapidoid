@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,16 +32,17 @@ import org.rapidoid.setup.Admin;
 import org.rapidoid.setup.On;
 import org.rapidoid.u.U;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
-
 
 @Authors("Nikolche Mihajlovski")
 @Since("5.1.0")
 public class RoutesHandler extends GUI implements Callable<Object> {
 
 	@Override
-	public Object call() throws Exception {
+	public Object call() {
 		List<Object> routes = U.list();
 
 		Set<Route> appRoutes = On.setup().routes().allNonAdmin();
@@ -81,7 +82,6 @@ public class RoutesHandler extends GUI implements Callable<Object> {
 			rows.add(routeRow(route, verbs, withHandler));
 		}
 
-
 		return table_(rows);
 	}
 
@@ -93,14 +93,9 @@ public class RoutesHandler extends GUI implements Callable<Object> {
 	}
 
 	private static void sortRoutes(List<Route> routes) {
-		Collections.sort(routes, new Comparator<Route>() {
-
-			@Override
-			public int compare(Route a, Route b) {
-				int cmpByPath = a.path().compareTo(b.path());
-				return cmpByPath != 0 ? cmpByPath : a.verb().compareTo(b.verb());
-			}
-
+		routes.sort((a, b) -> {
+			int cmpByPath = a.path().compareTo(b.path());
+			return cmpByPath != 0 ? cmpByPath : a.verb().compareTo(b.verb());
 		});
 	}
 

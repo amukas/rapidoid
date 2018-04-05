@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,16 +25,14 @@ import org.rapidoid.annotation.Authors;
 import org.rapidoid.annotation.Since;
 import org.rapidoid.cls.Cls;
 import org.rapidoid.commons.Str;
-import org.rapidoid.lambda.Mapper;
+import org.rapidoid.commons.URIs;
 import org.rapidoid.u.U;
-import org.rapidoid.util.Msc;
 
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 @Authors("Nikolche Mihajlovski")
 @Since("5.1.0")
@@ -70,12 +68,7 @@ public class PathPattern extends RapidoidThing implements Comparable<PathPattern
 		final Map<String, String> groups = U.map();
 		final AtomicInteger counter = new AtomicInteger();
 
-		String regex = Str.replace(path, PATH_PARAM_REGEX, new Mapper<String[], String>() {
-			@Override
-			public String map(String[] gr) throws Exception {
-				return toPathParamRegex(groups, counter, gr[1]);
-			}
-		});
+		String regex = Str.replace(path, PATH_PARAM_REGEX, gr -> toPathParamRegex(groups, counter, gr[1]));
 
 		if (regex.equals("/*")) {
 			regex = "/" + toPathParamRegex(groups, counter, ANY, ".*");
@@ -151,7 +144,7 @@ public class PathPattern extends RapidoidThing implements Comparable<PathPattern
 				String val = Cls.invoke(MATCHER_GROUP, matcher, e.getValue());
 
 				if (val != null) {
-					val = Msc.urlDecodeOrKeepOriginal(val);
+					val = URIs.urlDecodeOrKeepOriginal(val);
 					params.put(e.getKey(), val);
 				}
 			}
@@ -172,12 +165,7 @@ public class PathPattern extends RapidoidThing implements Comparable<PathPattern
 	}
 
 	public String prefix() {
-		String simplifiedPattern = Str.replace(path, PATH_PARAM_REGEX, new Mapper<String[], String>() {
-			@Override
-			public String map(String[] gr) throws Exception {
-				return "*";
-			}
-		});
+		String simplifiedPattern = Str.replace(path, PATH_PARAM_REGEX, gr -> "*");
 
 		String prefix = Str.cutToFirst(simplifiedPattern, "*");
 

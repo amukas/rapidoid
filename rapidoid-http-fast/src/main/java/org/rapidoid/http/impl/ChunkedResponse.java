@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,6 @@ import org.rapidoid.writable.ReusableWritable;
 import java.io.IOException;
 import java.io.OutputStream;
 
-
 @Authors("Nikolche Mihajlovski")
 @Since("5.4.0")
 public class ChunkedResponse extends OutputStream {
@@ -46,22 +45,22 @@ public class ChunkedResponse extends OutputStream {
 	}
 
 	@Override
-	public synchronized void write(int b) throws IOException {
+	public synchronized void write(int b) {
 		chunk.write(b);
 	}
 
 	@Override
-	public synchronized void write(byte[] b) throws IOException {
+	public synchronized void write(byte[] b) {
 		chunk.write(b);
 	}
 
 	@Override
-	public synchronized void write(byte[] b, int off, int len) throws IOException {
+	public synchronized void write(byte[] b, int off, int len) {
 		chunk.write(b, off, len);
 	}
 
 	@Override
-	public synchronized void flush() throws IOException {
+	public synchronized void flush() {
 		// lazy init
 		if (startChunkedResp.go()) resp.startChunkedOutputStream();
 

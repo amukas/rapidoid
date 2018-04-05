@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 @SuppressWarnings("serial")
 @Authors("Nikolche Mihajlovski")
 @Since("2.0.0")
@@ -47,7 +46,7 @@ public class Models extends RapidoidThing {
 		"lastupdatedby", "lastupdatedon");
 
 	public static <T> Items beanItems(Class<T> beanType, Object... beans) {
-		ListItems items = new BeanListItems<T>(beanType);
+		ListItems items = new BeanListItems<>(beanType);
 
 		for (Object bean : beans) {
 			items.add(item(bean));
@@ -87,7 +86,7 @@ public class Models extends RapidoidThing {
 	public static List<Property> propertiesOf(Object target, String... propertyNames) {
 		return properties(Beany.propertiesOf(target).select(new ModelPropertySelector(propertyNames) {
 			@Override
-			public boolean eval(Prop prop) throws Exception {
+			public boolean eval(Prop prop) {
 				return isReadable(prop);
 			}
 		}));
@@ -96,7 +95,7 @@ public class Models extends RapidoidThing {
 	public static List<Property> editablePropertiesOf(Object target, String... propertyNames) {
 		return properties(Beany.propertiesOf(target).select(new ModelPropertySelector(propertyNames) {
 			@Override
-			public boolean eval(Prop prop) throws Exception {
+			public boolean eval(Prop prop) {
 				return isEditable(prop);
 			}
 		}));
@@ -105,7 +104,7 @@ public class Models extends RapidoidThing {
 	public static List<Property> readablePropertiesOf(Object target, String... propertyNames) {
 		return properties(Beany.propertiesOf(target).select(new ModelPropertySelector(propertyNames) {
 			@Override
-			public boolean eval(Prop prop) throws Exception {
+			public boolean eval(Prop prop) {
 				return isReadable(prop);
 			}
 		}));
@@ -139,11 +138,7 @@ public class Models extends RapidoidThing {
 			return false;
 		}
 
-		if (prop.isReadOnly() && !Collection.class.isAssignableFrom(prop.getType())) {
-			return false;
-		}
-
-		return true;
+		return !prop.isReadOnly() || Collection.class.isAssignableFrom(prop.getType());
 	}
 
 	public static boolean isReadable(Prop prop) {
@@ -168,7 +163,7 @@ public class Models extends RapidoidThing {
 	}
 
 	public static <T> Var<T> propertyVar(String name, Item item, String property, T initValue, boolean readOnly) {
-		return new ItemPropertyVar<T>(name, item, property, initValue, readOnly);
+		return new ItemPropertyVar<>(name, item, property, initValue, readOnly);
 	}
 
 	public static boolean isSpecialProperty(String name) {

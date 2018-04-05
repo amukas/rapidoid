@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,7 @@
 
 package org.rapidoid.http.impl;
 
+import org.essentials4j.Do;
 import org.rapidoid.RapidoidThing;
 import org.rapidoid.annotation.Authors;
 import org.rapidoid.annotation.Since;
@@ -45,11 +46,9 @@ import org.rapidoid.log.Log;
 import org.rapidoid.u.U;
 import org.rapidoid.util.AnsiColor;
 import org.rapidoid.util.Constants;
-import org.rapidoid.util.Msc;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-
 
 @Authors("Nikolche Mihajlovski")
 @Since("5.1.0")
@@ -567,30 +566,12 @@ public class HttpRoutesImpl extends RapidoidThing implements HttpRoutes {
 
 	@Override
 	public Set<Route> allAdmin() {
-		Set<Route> routes = U.set(all());
-
-		for (Iterator<Route> it = routes.iterator(); it.hasNext(); ) {
-			Route route = it.next();
-			if (!route.config().zone().equalsIgnoreCase("admin")) {
-				it.remove();
-			}
-		}
-
-		return routes;
+		return U.set(Do.findIn(all()).all(Route::isAdminOnly));
 	}
 
 	@Override
 	public Set<Route> allNonAdmin() {
-		Set<Route> routes = U.set(all());
-
-		for (Iterator<Route> it = routes.iterator(); it.hasNext(); ) {
-			Route route = it.next();
-			if (route.config().zone().equalsIgnoreCase("admin")) {
-				it.remove();
-			}
-		}
-
-		return routes;
+		return U.set(Do.findIn(all()).all(route -> !route.isAdminOnly()));
 	}
 
 	@Override
@@ -600,13 +581,9 @@ public class HttpRoutesImpl extends RapidoidThing implements HttpRoutes {
 
 	@Override
 	public Route find(HttpVerb verb, String path) {
-		for (Route route : all()) {
-			if (route.verb().equals(verb) && route.path().equals(path)) {
-				return route;
-			}
-		}
-
-		return null;
+		return Do.findIn(all())
+			.first(route -> route.verb().equals(verb) && route.path().equals(path))
+			.orElse(null);
 	}
 
 	@Override
@@ -672,7 +649,7 @@ public class HttpRoutesImpl extends RapidoidThing implements HttpRoutes {
 
 	public boolean ready() {
 		long lastChangedAt = lastChangedAt().getTime();
-		return !isEmpty() && Msc.timedOut(lastChangedAt, ROUTE_SETUP_WAITING_TIME_MS);
+		return !isEmpty() && U.timedOut(lastChangedAt, ROUTE_SETUP_WAITING_TIME_MS);
 	}
 
 	public void waitToStabilize() {

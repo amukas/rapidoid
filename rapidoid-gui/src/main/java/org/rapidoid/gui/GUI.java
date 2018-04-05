@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,15 +20,11 @@
 
 package org.rapidoid.gui;
 
-
 import org.rapidoid.annotation.Authors;
 import org.rapidoid.annotation.Since;
 import org.rapidoid.beany.Beany;
 import org.rapidoid.cls.Cls;
-import org.rapidoid.commons.AnyObj;
-import org.rapidoid.commons.Dates;
-import org.rapidoid.commons.English;
-import org.rapidoid.commons.Str;
+import org.rapidoid.commons.*;
 import org.rapidoid.gui.input.*;
 import org.rapidoid.gui.reqinfo.IReqInfo;
 import org.rapidoid.gui.reqinfo.ReqInfo;
@@ -525,7 +521,7 @@ public abstract class GUI extends HTML implements Role {
 
 	public static Var<List<String>> listVar(String name) {
 		Class<List<String>> type = U.cast(List.class);
-		return new ReqDataVar<>(name, type, U.<String>list());
+		return new ReqDataVar<>(name, type, U.list());
 	}
 
 	public static Var<List<String>> listVar(String name, List<String> defaultValue) {
@@ -741,7 +737,7 @@ public abstract class GUI extends HTML implements Role {
 		List<Object> list = U.list();
 
 		for (Object value : values) {
-			if (Msc.isArray(value) && !hasGUIElements(value)) {
+			if (Arr.isArray(value) && !hasGUIElements(value)) {
 				value = U.str(value);
 			}
 			if (value == null || value instanceof Iterable<?>) {
@@ -922,9 +918,9 @@ public abstract class GUI extends HTML implements Role {
 				sb.append("&");
 			}
 
-			sb.append(Msc.urlEncode(e.getKey()));
+			sb.append(URIs.urlEncode(e.getKey()));
 			sb.append("=");
-			sb.append(Msc.urlEncode(e.getValue()));
+			sb.append(URIs.urlEncode(e.getValue()));
 		}
 
 		return uri(sb.toString());

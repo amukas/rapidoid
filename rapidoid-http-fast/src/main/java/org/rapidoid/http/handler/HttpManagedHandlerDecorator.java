@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,8 +32,6 @@ import org.rapidoid.net.abstracts.Channel;
 import org.rapidoid.u.U;
 import org.rapidoid.util.LazyInit;
 
-import java.util.concurrent.Callable;
-
 @Authors("Nikolche Mihajlovski")
 @Since("5.5.1")
 public class HttpManagedHandlerDecorator extends AbstractHttpHandlerDecorator {
@@ -48,12 +46,7 @@ public class HttpManagedHandlerDecorator extends AbstractHttpHandlerDecorator {
 		super(handler, http);
 
 		this.options = options;
-		this.wrappers = new LazyInit<>(new Callable<HttpWrapper[]>() {
-			@Override
-			public HttpWrapper[] call() {
-				return HttpWrappers.assembleWrappers(http, options);
-			}
-		});
+		this.wrappers = new LazyInit<>(() -> HttpWrappers.assembleWrappers(http, options));
 	}
 
 	@Override
@@ -70,23 +63,18 @@ public class HttpManagedHandlerDecorator extends AbstractHttpHandlerDecorator {
 
 	private void execHandlerJob(final Channel channel, final boolean isKeepAlive, final MediaType contentType, final Req req) {
 
-		With.tag(CTX_TAG_HANDLER).exchange(req).run(new Runnable() {
+		With.tag(CTX_TAG_HANDLER).exchange(req).run(() -> {
+			try {
+				req.response()
+					.view(options.view())
+					.contentType(options.contentType())
+					.mvc(options.mvc());
 
-			@Override
-			public void run() {
-				try {
-					req.response()
-						.view(options.view())
-						.contentType(options.contentType())
-						.mvc(options.mvc());
+				handleWithWrappers(channel, isKeepAlive, contentType, req, wrappers.get());
 
-					handleWithWrappers(channel, isKeepAlive, contentType, req, wrappers.get());
-
-				} catch (Throwable e) {
-					handleError(req, e);
-				}
+			} catch (Throwable e) {
+				handleError(req, e);
 			}
-
 		});
 	}
 

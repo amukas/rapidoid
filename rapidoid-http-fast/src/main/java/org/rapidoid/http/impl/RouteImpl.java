@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,6 +26,7 @@ import org.rapidoid.annotation.Since;
 import org.rapidoid.cache.Cache;
 import org.rapidoid.cache.Caching;
 import org.rapidoid.http.HttpVerb;
+import org.rapidoid.http.MediaType;
 import org.rapidoid.http.Route;
 import org.rapidoid.http.RouteConfig;
 import org.rapidoid.http.handler.HttpHandler;
@@ -33,18 +34,17 @@ import org.rapidoid.u.U;
 
 import java.util.Date;
 
-
 @Authors("Nikolche Mihajlovski")
 @Since("5.1.0")
 public class RouteImpl extends RapidoidThing implements Route {
 
-	private volatile HttpVerb verb;
+	private final HttpVerb verb;
 
-	private volatile String path;
+	private final String path;
 
 	private volatile HttpHandler handler;
 
-	private volatile RouteOptions options;
+	private final RouteOptions options;
 
 	private volatile Date lastChangedAt = new Date();
 
@@ -133,5 +133,17 @@ public class RouteImpl extends RapidoidThing implements Route {
 	@Override
 	public Date lastChangedAt() {
 		return lastChangedAt;
+	}
+
+	@Override
+	public boolean isAPI() {
+		if (options.mvc()) return false;
+
+		return options.contentType() != MediaType.HTML_UTF_8;
+	}
+
+	@Override
+	public boolean isAdminOnly() {
+		return options.zone().equalsIgnoreCase("admin");
 	}
 }

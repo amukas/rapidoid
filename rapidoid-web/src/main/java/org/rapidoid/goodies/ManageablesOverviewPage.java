@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-
 @Authors("Nikolche Mihajlovski")
 @Since("5.3.0")
 public class ManageablesOverviewPage extends GUI implements Callable<Object> {
@@ -47,7 +46,7 @@ public class ManageablesOverviewPage extends GUI implements Callable<Object> {
 	private volatile String baseUri;
 
 	@Override
-	public Object call() throws Exception {
+	public Object call() {
 
 		List<Object> info = U.list();
 		Collection<? extends GroupOf<?>> targetGroups = retrieveTargetGroups();
@@ -98,16 +97,13 @@ public class ManageablesOverviewPage extends GUI implements Callable<Object> {
 		Grid grid = grid(items)
 			.columns(columns)
 			.headers(columns)
-			.toUri(new Mapper<Manageable, String>() {
-				@Override
-				public String map(Manageable item) throws Exception {
+			.toUri((Mapper<Manageable, String>) item -> {
 
-					final List<String> uri = U.list(nav);
-					uri.add(0, U.safe(baseUri));
-					uri.add(item.id());
+				final List<String> uri = U.list(nav);
+				uri.add(0, U.safe(baseUri));
+				uri.add(item.id());
 
-					return Msc.uri(U.arrayOf(uri));
-				}
+				return Msc.uri(U.arrayOf(uri));
 			})
 			.pageSize(100);
 

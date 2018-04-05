@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,13 +20,12 @@
 
 package org.rapidoid.http;
 
-
 import org.junit.Test;
-import org.rapidoid.activity.RapidoidThread;
 import org.rapidoid.annotation.Authors;
 import org.rapidoid.annotation.Since;
 import org.rapidoid.concurrent.Callback;
 import org.rapidoid.setup.On;
+import org.rapidoid.thread.RapidoidThread;
 import org.rapidoid.u.U;
 import org.rapidoid.util.Msc;
 import org.rapidoid.util.Wait;
@@ -39,12 +38,7 @@ public class MicroServicesTest extends HttpTestCommons {
 
 	@Test
 	public void testMicroserviceCommunication() {
-		On.req(new ReqHandler() {
-			@Override
-			public Object execute(Req req) throws Exception {
-				return U.num(req.param("n")) + 1;
-			}
-		});
+		On.req((ReqHandler) req -> U.num(req.param("n")) + 1);
 
 		// a blocking call
 		eq(REST.get(localhost("/?n=7"), Integer.class).intValue(), 8);
@@ -54,27 +48,21 @@ public class MicroServicesTest extends HttpTestCommons {
 		final CountDownLatch latch = new CountDownLatch(count);
 		Msc.startMeasure();
 
-		RapidoidThread loop = Msc.loop(new Runnable() {
-			@Override
-			public void run() {
-				System.out.println(latch);
-				U.sleep(1000);
-			}
+		RapidoidThread loop = Msc.loop(() -> {
+			System.out.println(latch);
+			U.sleep(1000);
 		});
 
 		for (int i = 0; i < count; i++) {
 			final int expected = i + 1;
 
-			Callback<Integer> callback = new Callback<Integer>() {
-				@Override
-				public void onDone(Integer result, Throwable error) throws Exception {
-					if (result != null) {
-						eq(result.intValue(), expected);
-					} else {
-						registerError(error);
-					}
-					latch.countDown();
+			Callback<Integer> callback = (result, error) -> {
+				if (result != null) {
+					eq(result.intValue(), expected);
+				} else {
+					registerError(error);
 				}
+				latch.countDown();
 			};
 
 			if (i % 2 == 0) {

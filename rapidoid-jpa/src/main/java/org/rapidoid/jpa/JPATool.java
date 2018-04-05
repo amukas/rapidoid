@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,7 +38,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.metamodel.EntityType;
 import java.util.List;
 import java.util.concurrent.Callable;
-
 
 @Authors("Nikolche Mihajlovski")
 @Since("5.1.0")
@@ -74,67 +73,40 @@ public class JPATool extends RapidoidThing {
 	}
 
 	public <E> E insert(final E entity) {
-		return transactional(new Callable<E>() {
-
-			@Override
-			public E call() throws Exception {
-				em.persist(entity);
-				return entity;
-			}
-
+		return transactional(() -> {
+			em.persist(entity);
+			return entity;
 		});
 	}
 
 	public <E> E update(final E entity) {
 		U.notNull(getIdentifier(entity), "entity identifier");
 
-		return transactional(new Callable<E>() {
-
-			@Override
-			public E call() throws Exception {
-				if (em.contains(entity)) {
-					em.persist(entity);
-					return entity;
-				} else {
-					return em.merge(entity);
-				}
+		return transactional(() -> {
+			if (em.contains(entity)) {
+				em.persist(entity);
+				return entity;
+			} else {
+				return em.merge(entity);
 			}
-
 		});
 	}
 
 	public <E> E merge(final E entity) {
-		return transactional(new Callable<E>() {
-
-			@Override
-			public E call() throws Exception {
-				return em.merge(entity);
-			}
-
-		});
+		return transactional(() -> em.merge(entity));
 	}
 
 	public <E> void delete(final Class<E> clazz, final Object id) {
-		transactional(new Callable<E>() {
-
-			@Override
-			public E call() throws Exception {
-				em.remove(get(clazz, id));
-				return null;
-			}
-
+		transactional((Callable<E>) () -> {
+			em.remove(get(clazz, id));
+			return null;
 		});
 	}
 
 	public void delete(final Object entity) {
-		transactional(new Callable<Object>() {
-
-			@Override
-			public Object call() throws Exception {
-				em.remove(entity);
-				return null;
-			}
-
+		transactional(() -> {
+			em.remove(entity);
+			return null;
 		});
 	}
 
@@ -235,14 +207,9 @@ public class JPATool extends RapidoidThing {
 	}
 
 	public void flush() {
-		transactional(new Callable<Object>() {
-
-			@Override
-			public Object call() throws Exception {
-				em.flush();
-				return null;
-			}
-
+		transactional(() -> {
+			em.flush();
+			return null;
 		});
 	}
 
@@ -267,7 +234,7 @@ public class JPATool extends RapidoidThing {
 	}
 
 	public <T> Results<T> find(CriteriaQuery<T> query) {
-		return new ResultsImpl<>(new JPACriteriaQueryEntities<T>(query));
+		return new ResultsImpl<>(new JPACriteriaQueryEntities<>(query));
 	}
 
 	public <T> Results<T> of(Class<T> clazz) {

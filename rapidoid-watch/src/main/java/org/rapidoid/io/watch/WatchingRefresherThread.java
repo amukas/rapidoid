@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,11 +20,11 @@
 
 package org.rapidoid.io.watch;
 
-import org.rapidoid.activity.AbstractLoopThread;
 import org.rapidoid.annotation.Authors;
 import org.rapidoid.annotation.Since;
 import org.rapidoid.log.Log;
 import org.rapidoid.reload.Reload;
+import org.rapidoid.thread.AbstractLoopThread;
 import org.rapidoid.u.U;
 
 import java.io.File;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-
+import java.util.function.Predicate;
 
 @Authors("Nikolche Mihajlovski")
 @Since("4.1.0")
@@ -53,12 +53,16 @@ public class WatchingRefresherThread extends AbstractLoopThread {
 	private final Queue<String> modified;
 	private final Queue<String> deleted;
 
-	public WatchingRefresherThread(Collection<String> folders, Queue<String> created, Queue<String> modified, Queue<String> deleted, ClassRefresher refresher) {
+	private final Predicate<String> veto;
+
+	public WatchingRefresherThread(Collection<String> folders, Queue<String> created, Queue<String> modified,
+	                               Queue<String> deleted, ClassRefresher refresher, Predicate<String> veto) {
 		this.folders = folders;
 		this.created = created;
 		this.modified = modified;
 		this.deleted = deleted;
 		this.refresher = refresher;
+		this.veto = veto;
 
 		setName("reloader" + idGen.incrementAndGet());
 	}
@@ -101,7 +105,7 @@ public class WatchingRefresherThread extends AbstractLoopThread {
 
 		try {
 			List<String> classnames = filenamesToClassnames(filenames);
-			List<Class<?>> classes = Reload.reloadClasses(folders, classnames);
+			List<Class<?>> classes = Reload.reloadClasses(folders, classnames, veto);
 			refresher.refresh(classes, filenamesToClassnames(deletedFilenames));
 		} catch (Exception e) {
 			e.printStackTrace();

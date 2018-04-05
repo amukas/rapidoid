@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,9 +30,6 @@ import org.rapidoid.render.Template;
 import org.rapidoid.render.TemplateFactory;
 import org.rapidoid.render.TemplateStore;
 import org.rapidoid.u.U;
-
-import java.io.OutputStream;
-
 
 @Authors("Nikolche Mihajlovski")
 @Since("5.2.0")
@@ -57,22 +54,14 @@ public class DefaultViewResolver extends AbstractViewResolver<TemplateFactory> {
 	}
 
 	protected View view(final Template template) {
-		return new View() {
-			@Override
-			public void render(Object model, OutputStream out) {
-				template.renderTo(out, model);
-			}
-		};
+		return (model, out) -> template.renderTo(out, model);
 	}
 
 	protected TemplateStore store(final ResourceLoader templateLoader) {
-		return new TemplateStore() {
-			@Override
-			public String loadTemplate(String name) throws Exception {
-				byte[] bytes = templateLoader.load(name);
-				U.must(bytes != null, "The Rapidoid template '%s' doesn't exist!", name);
-				return new String(bytes);
-			}
+		return name -> {
+			byte[] bytes = templateLoader.load(name);
+			U.must(bytes != null, "The Rapidoid template '%s' doesn't exist!", name);
+			return new String(bytes);
 		};
 	}
 

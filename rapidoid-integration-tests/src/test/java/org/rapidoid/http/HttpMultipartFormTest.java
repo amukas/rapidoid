@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@
  */
 
 package org.rapidoid.http;
-
 
 import org.junit.Test;
 import org.rapidoid.annotation.Authors;
@@ -37,7 +36,7 @@ import java.util.Map;
 public class HttpMultipartFormTest extends IsolatedIntegrationTest {
 
 	@Test
-	public void shouldHandleUploads() throws Throwable {
+	public void shouldHandleUploads() {
 		defaultServerSetup();
 
 		String hash1 = Crypto.md5(IO.loadBytes("test1.txt"));
@@ -63,7 +62,7 @@ public class HttpMultipartFormTest extends IsolatedIntegrationTest {
 	}
 
 	@Test
-	public void shouldHandleBigUploads() throws Throwable {
+	public void shouldHandleBigUploads() {
 		defaultServerSetup();
 
 		Map<String, String> cookies = U.map("foo", "bar", "COOKIE1", "a");

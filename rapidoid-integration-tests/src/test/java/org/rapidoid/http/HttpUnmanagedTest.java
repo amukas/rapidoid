@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@
  */
 
 package org.rapidoid.http;
-
 
 import org.junit.Test;
 import org.rapidoid.annotation.Authors;
@@ -40,9 +39,7 @@ public class HttpUnmanagedTest extends IsolatedIntegrationTest {
 	@Test
 	public void testUnmanagedHandlersWithPrerenderedJSON1() {
 
-		On.post("/json").managed(false).json((Req req, Resp resp) -> {
-			return resp.body(PRE_RENDERED);
-		});
+		On.post("/json").managed(false).json((Req req, Resp resp) -> resp.body(PRE_RENDERED));
 
 		onlyPost("/json");
 	}
@@ -50,9 +47,7 @@ public class HttpUnmanagedTest extends IsolatedIntegrationTest {
 	@Test
 	public void testUnmanagedHandlersWithPrerenderedJSON2() {
 
-		On.get("/json").managed(false).serve((Req req, Resp resp) -> {
-			return resp.contentType(MediaType.JSON).body(PRE_RENDERED);
-		});
+		On.get("/json").managed(false).serve((Req req, Resp resp) -> resp.contentType(MediaType.JSON).body(PRE_RENDERED));
 
 		onlyGet("/json");
 	}
@@ -112,9 +107,7 @@ public class HttpUnmanagedTest extends IsolatedIntegrationTest {
 	@Test
 	public void testUnmanagedHandlersWithHtml() {
 
-		On.post("/").managed(false).serve((Req req, Resp resp) -> {
-			return resp.html("denied!").code(403);
-		});
+		On.post("/").managed(false).serve((Req req, Resp resp) -> resp.html("denied!").code(403));
 
 		onlyPost("/");
 	}

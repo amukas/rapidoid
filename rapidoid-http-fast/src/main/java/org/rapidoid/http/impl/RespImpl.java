@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,7 +53,6 @@ import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-
 
 @Authors("Nikolche Mihajlovski")
 @Since("5.0.x")
@@ -528,31 +527,25 @@ public class RespImpl extends RapidoidThing implements Resp {
 	public void chunk(final byte[] data, final int offset, final int length) {
 		U.notNull(data, "data");
 
-		resume(new AsyncLogic() {
-			@Override
-			public boolean resumeAsync() {
-				Buf out = req.channel().output();
+		resume(() -> {
+			Buf out = req.channel().output();
 
-				out.append(Integer.toHexString(length));
-				out.append("\r\n");
-				out.append(data, offset, length);
-				out.append("\r\n");
+			out.append(Integer.toHexString(length));
+			out.append("\r\n");
+			out.append(data, offset, length);
+			out.append("\r\n");
 
-				req.channel().send();
+			req.channel().send();
 
-				return false;
-			}
+			return false;
 		});
 	}
 
 	void terminatingChunk() {
-		resume(new AsyncLogic() {
-			@Override
-			public boolean resumeAsync() {
-				Buf out = req.channel().output();
-				out.append("0\r\n\r\n");
-				return true;
-			}
+		resume(() -> {
+			Buf out = req.channel().output();
+			out.append("0\r\n\r\n");
+			return true;
 		});
 	}
 

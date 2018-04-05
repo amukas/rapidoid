@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,7 +26,6 @@ import org.rapidoid.annotation.Since;
 import org.rapidoid.commons.Err;
 import org.rapidoid.setup.IGoodies;
 import org.rapidoid.setup.Setup;
-
 
 @Authors("Nikolche Mihajlovski")
 @Since("5.1.0")
@@ -45,11 +44,6 @@ public class RapidoidGoodies extends RapidoidThing implements IGoodies {
 	@Override
 	public void lifecycle(Setup setup) {
 		Goodies.lifecycle(setup);
-	}
-
-	@Override
-	public void dbAdmin(Setup setup) {
-		Goodies.dbAdmin(setup);
 	}
 
 	@Override
@@ -73,11 +67,6 @@ public class RapidoidGoodies extends RapidoidThing implements IGoodies {
 	}
 
 	@Override
-	public void ping(Setup setup) {
-		Goodies.ping(setup);
-	}
-
-	@Override
 	public void auth(Setup setup) {
 		Goodies.auth(setup);
 	}
@@ -98,22 +87,7 @@ public class RapidoidGoodies extends RapidoidThing implements IGoodies {
 	}
 
 	@Override
-	public void welcome(Setup setup) {
-		Goodies.welcome(setup);
-	}
-
-	@Override
-	public void status(Setup setup) {
-		Goodies.status(setup);
-	}
-
-	@Override
-	public void discovery(Setup setup) {
-		Goodies.discovery(setup);
-	}
-
-	@Override
-	public void echo(Setup setup) {
-		Goodies.echo(setup);
+	public void openapi(Setup setup) {
+		Goodies.openapi(setup);
 	}
 }

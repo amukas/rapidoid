@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,6 @@
 package org.rapidoid.http.impl.lowlevel;
 
 import org.rapidoid.RapidoidThing;
-import org.rapidoid.activity.RapidoidThreadLocals;
 import org.rapidoid.annotation.Authors;
 import org.rapidoid.annotation.Since;
 import org.rapidoid.buffer.Buf;
@@ -43,6 +42,7 @@ import org.rapidoid.log.Log;
 import org.rapidoid.log.LogLevel;
 import org.rapidoid.net.AsyncLogic;
 import org.rapidoid.net.abstracts.Channel;
+import org.rapidoid.thread.RapidoidThreadLocals;
 import org.rapidoid.u.U;
 import org.rapidoid.util.Msc;
 import org.rapidoid.writable.ReusableWritable;
@@ -52,7 +52,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.rapidoid.util.Constants.CR_LF;
-
 
 @Authors("Nikolche Mihajlovski")
 @Since("5.3.0")
@@ -223,13 +222,10 @@ class LowLevelHttpIO extends RapidoidThing {
 		req.revert();
 		req.async();
 
-		Runnable errorHandler = new Runnable() {
-			@Override
-			public void run() {
-				error(req, error, logLevel);
-				// the Req object will do the rendering
-				req.done();
-			}
+		Runnable errorHandler = () -> {
+			error(req, error, logLevel);
+			// the Req object will do the rendering
+			req.done();
 		};
 
 		Ctx ctx = Ctxs.get();

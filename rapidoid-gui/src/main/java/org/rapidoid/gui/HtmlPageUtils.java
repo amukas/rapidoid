@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,45 +29,19 @@ import org.rapidoid.http.HttpVerb;
 import org.rapidoid.render.Getter;
 import org.rapidoid.util.Msc;
 
-
 @Authors("Nikolche Mihajlovski")
 @Since("5.1.0")
 public class HtmlPageUtils extends RapidoidThing {
 
-	static final Getter HAS_PAGE = new Getter() {
-		@Override
-		public Object get(String page) {
-			return ReqInfo.get().hasRoute(HttpVerb.GET, strToUri(page));
-		}
-	};
+	static final Getter HAS_PAGE = page -> ReqInfo.get().hasRoute(HttpVerb.GET, strToUri(page));
 
-	static final Getter HAS_SPECIAL_PAGE = new Getter() {
-		@Override
-		public Object get(String page) {
-			return ReqInfo.get().hasRoute(HttpVerb.GET, Msc.specialUri(page));
-		}
-	};
+	static final Getter HAS_SPECIAL_PAGE = page -> ReqInfo.get().hasRoute(HttpVerb.GET, Msc.specialUri(page));
 
-	static final Getter HAS_ROLE = new Getter() {
-		@Override
-		public Object get(String role) {
-			return HtmlPageUtils.hasRole(role);
-		}
-	};
+	static final Getter HAS_ROLE = HtmlPageUtils::hasRole;
 
-	static final Getter HAS_PATH = new Getter() {
-		@Override
-		public Object get(String path) {
-			return HtmlPageUtils.hasPath(path);
-		}
-	};
+	static final Getter HAS_PATH = HtmlPageUtils::hasPath;
 
-	static final Getter HAS_ZONE = new Getter() {
-		@Override
-		public Object get(String zone) {
-			return HtmlPageUtils.hasZone(zone);
-		}
-	};
+	static final Getter HAS_ZONE = HtmlPageUtils::hasZone;
 
 	static boolean hasRole(String role) {
 		IReqInfo req = ReqInfo.get();

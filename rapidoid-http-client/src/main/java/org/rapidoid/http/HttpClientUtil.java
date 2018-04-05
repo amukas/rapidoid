@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,7 +39,6 @@ import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.nio.entity.NByteArrayEntity;
 import org.apache.http.protocol.HttpContext;
 import org.rapidoid.RapidoidThing;
-import org.rapidoid.activity.RapidoidThreadFactory;
 import org.rapidoid.annotation.Authors;
 import org.rapidoid.annotation.Since;
 import org.rapidoid.commons.Err;
@@ -50,20 +49,17 @@ import org.rapidoid.io.IO;
 import org.rapidoid.io.Upload;
 import org.rapidoid.log.Log;
 import org.rapidoid.net.tls.TLSUtil;
+import org.rapidoid.thread.RapidoidThreadFactory;
 import org.rapidoid.u.U;
 import org.rapidoid.util.Msc;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
-
 
 @Authors("Nikolche Mihajlovski")
 @Since("5.1.0")
@@ -71,19 +67,17 @@ public class HttpClientUtil extends RapidoidThing {
 
 	private static final RedirectStrategy NO_REDIRECTS = new RedirectStrategy() {
 		@Override
-		public boolean isRedirected(HttpRequest request, HttpResponse response, HttpContext context)
-			throws ProtocolException {
+		public boolean isRedirected(HttpRequest request, HttpResponse response, HttpContext context) {
 			return false;
 		}
 
 		@Override
-		public HttpUriRequest getRedirect(HttpRequest request, HttpResponse response, HttpContext context)
-			throws ProtocolException {
+		public HttpUriRequest getRedirect(HttpRequest request, HttpResponse response, HttpContext context) {
 			return null;
 		}
 	};
 
-	static CloseableHttpAsyncClient client(HttpClient client) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+	static CloseableHttpAsyncClient client(HttpClient client) {
 
 		ConnectionReuseStrategy reuseStrategy = client.reuseConnections() ? new DefaultConnectionReuseStrategy() : new NoConnectionReuseStrategy();
 

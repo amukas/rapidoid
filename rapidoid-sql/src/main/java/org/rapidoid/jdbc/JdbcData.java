@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,13 +20,12 @@
 
 package org.rapidoid.jdbc;
 
-
 import org.rapidoid.RapidoidThing;
 import org.rapidoid.annotation.Authors;
 import org.rapidoid.annotation.Since;
+import org.rapidoid.commons.Nums;
 import org.rapidoid.datamodel.PageableData;
 import org.rapidoid.lambda.Mapper;
-import org.rapidoid.util.Msc;
 
 import java.sql.ResultSet;
 import java.util.List;
@@ -54,7 +53,7 @@ public class JdbcData<T> extends RapidoidThing implements PageableData<T> {
 
 	@Override
 	public List<T> getPage(long skip, long limit) {
-		return jdbc.runQuery(resultType, resultMapper, sql, namedArgs, args, skip, Msc.toInt(limit));
+		return jdbc.runQuery(resultType, resultMapper, sql, namedArgs, args, skip, Nums.toInt(limit));
 	}
 
 	@Override

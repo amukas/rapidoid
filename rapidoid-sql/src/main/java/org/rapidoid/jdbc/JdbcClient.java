@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,6 +24,7 @@ import org.rapidoid.annotation.Authors;
 import org.rapidoid.annotation.Since;
 import org.rapidoid.cls.Cls;
 import org.rapidoid.collection.Coll;
+import org.rapidoid.commons.Nums;
 import org.rapidoid.concurrent.Callback;
 import org.rapidoid.concurrent.Callbacks;
 import org.rapidoid.config.Conf;
@@ -45,8 +46,6 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-
 
 @Authors("Nikolche Mihajlovski")
 @Since("3.0.0")
@@ -70,12 +69,7 @@ public class JdbcClient extends AutoManageable<JdbcClient> {
 
 	private final Config config;
 
-	private final LazyInit<JdbcWorkers> workers = new LazyInit<>(new Callable<JdbcWorkers>() {
-		@Override
-		public JdbcWorkers call() throws Exception {
-			return new JdbcWorkers(JdbcClient.this);
-		}
-	});
+	private final LazyInit<JdbcWorkers> workers = new LazyInit<>(() -> new JdbcWorkers(JdbcClient.this));
 
 	public JdbcClient(String name) {
 		super(name);
@@ -408,7 +402,7 @@ public class JdbcClient extends AutoManageable<JdbcClient> {
 		List<T> results = fetchData(resultType, resultMapper, sql, namedArgs, args);
 
 		if (needsPaging && !pagingInSql) {
-			results = Coll.range(results, Msc.toInt(skip), Msc.toInt(skip + limit));
+			results = Coll.range(results, Nums.toInt(skip), Nums.toInt(skip + limit));
 		}
 
 		U.must(results.size() <= limit, "Paging error: too many results!");
@@ -567,46 +561,37 @@ public class JdbcClient extends AutoManageable<JdbcClient> {
 	}
 
 	public void execute(final Callback<Void> callback, final Operation<Connection> operation) {
-		execute(new Operation<Connection>() {
+		execute(conn -> {
 
-			@Override
-			public void execute(Connection conn) {
+			try {
+				operation.execute(conn);
 
-				try {
-					operation.execute(conn);
-
-				} catch (Throwable e) {
-					Callbacks.done(callback, null, e);
-					return;
-				}
-
-				Callbacks.done(callback, null, null);
+			} catch (Throwable e) {
+				Callbacks.done(callback, null, e);
+				return;
 			}
+
+			Callbacks.done(callback, null, null);
 		});
 	}
 
 	public <T> void execute(final Mapper<ResultSet, T> resultMapper, final Callback<List<T>> callback, final String sql, final Object... args) {
-		execute(new Operation<Connection>() {
+		execute(conn -> {
+			List<T> results = U.list();
 
-			@Override
-			public void execute(Connection conn) throws Exception {
-				List<T> results = U.list();
+			try (PreparedStatement stmt = JdbcUtil.prepare(conn, sql, null, args)) {
 
-				try (PreparedStatement stmt = JdbcUtil.prepare(conn, sql, null, args)) {
-
-					ResultSet rs = stmt.executeQuery();
-					while (rs.next()) {
-						results.add(resultMapper.map(rs));
-					}
-
-				} catch (Throwable e) {
-					Callbacks.done(callback, null, e);
-					return;
+				ResultSet rs = stmt.executeQuery();
+				while (rs.next()) {
+					results.add(resultMapper.map(rs));
 				}
 
-				Callbacks.done(callback, results, null);
+			} catch (Throwable e) {
+				Callbacks.done(callback, null, e);
+				return;
 			}
 
+			Callbacks.done(callback, results, null);
 		});
 	}
 

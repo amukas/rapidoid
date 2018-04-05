@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +32,6 @@ import org.rapidoid.u.U;
 
 import java.util.Collections;
 import java.util.List;
-
 
 @Authors("Nikolche Mihajlovski")
 @Since("2.0.0")
@@ -60,12 +59,13 @@ public abstract class AbstractItem extends AbstractModel implements Item {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T get(String property) {
-		if (property.equals("_class")) {
-			return (T) Cls.entityName(value);
-		} else if (property.equals("_toString")) {
-			return (T) value.toString();
-		} else if (property.equals("_str")) {
-			return (T) Beany.beanToNiceText(value, false);
+		switch (property) {
+			case "_class":
+				return (T) Cls.entityName(value);
+			case "_toString":
+				return (T) value.toString();
+			case "_str":
+				return (T) Beany.beanToNiceText(value, false);
 		}
 
 		Prop prop = Beany.property(value, property, true);

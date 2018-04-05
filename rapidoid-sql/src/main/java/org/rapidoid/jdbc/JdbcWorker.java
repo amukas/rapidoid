@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,14 +20,12 @@
 
 package org.rapidoid.jdbc;
 
-
-import org.rapidoid.activity.AbstractLoopThread;
 import org.rapidoid.annotation.Authors;
 import org.rapidoid.annotation.Since;
 import org.rapidoid.lambda.Operation;
 import org.rapidoid.log.Log;
+import org.rapidoid.thread.AbstractLoopThread;
 import org.rapidoid.u.U;
-import org.rapidoid.util.Msc;
 
 import java.sql.Connection;
 import java.util.Queue;
@@ -75,7 +73,7 @@ public class JdbcWorker extends AbstractLoopThread {
 					break;
 				}
 
-			} while (Msc.timedOut(since, batchTimeMs));
+			} while (U.timedOut(since, batchTimeMs));
 
 		} catch (Exception e) {
 			Log.error("JDBC worker operation error!", e);
